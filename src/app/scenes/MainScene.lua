@@ -10,13 +10,13 @@ end)
 function MainScene:ctor()
     self.bulletList = {}
 
-    for i=1,100 do
+    for i=1,30 do
         local bullet = BulletObj.new(i)
         self:addChild(bullet)
         table.insert(self.bulletList,bullet)
     end
 
-    self.checkFlag = 2  --1|普通N^2碰撞检测  2|四叉树碰撞检测
+    self.checkFlag = 1  --1|普通N^2碰撞检测  2|四叉树碰撞检测
     if self.checkFlag ~= 1 then
         self.quad = Quadtree.create(1,cc.rect(0,0,display.width,display.height))
         for i=1,#self.bulletList do
