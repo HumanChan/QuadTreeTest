@@ -3,6 +3,8 @@ require("config")
 require("cocos.init")
 require("framework.init")
 
+require("app.const.GlobalConst")
+
 local MyApp = class("MyApp", cc.mvc.AppBase)
 
 function MyApp:ctor()
