@@ -5,14 +5,12 @@ local Quadtree = class("Quadtree",function()
 end)
 
 function Quadtree:ctor()
-
+    self.MAX_OBJECTS = 10
+    self.MAX_LEVELS = 5
 end
 
 function Quadtree.create(level,bounds,parent,index)
     local quadTree = Quadtree.new()
-
-    quadTree.MAX_OBJECTS = 10
-    quadTree.MAX_LEVELS = 6
 
     quadTree.level = level
     ------------------------
@@ -33,21 +31,18 @@ function Quadtree.create(level,bounds,parent,index)
     return quadTree
 end
 
-
 ----------------
 --节点分割
 --4 1
 --3 2
 function Quadtree:split()
-    local subWidth = self.cw
-    local subHeight = self.ch
     local x = self.x
     local y = self.y
 
-    local node1 = Quadtree.create(self.level+1,cc.rect(x+subWidth,y+subHeight,subWidth,subHeight),self,1)
-    local node2 = Quadtree.create(self.level+1,cc.rect(x+subWidth,y,subWidth,subHeight),self,2)
-    local node3 = Quadtree.create(self.level+1,cc.rect(x,y,subWidth,subHeight),self,3)
-    local node4 = Quadtree.create(self.level+1,cc.rect(x,y+subHeight,subWidth,subHeight),self,4)
+    local node1 = Quadtree.create(self.level+1,cc.rect(self.xMid,self.yMid,self.cw,self.ch),self,1)
+    local node2 = Quadtree.create(self.level+1,cc.rect(self.xMid,y,self.cw,self.ch),self,2)
+    local node3 = Quadtree.create(self.level+1,cc.rect(x,y,self.cw,self.ch),self,3)
+    local node4 = Quadtree.create(self.level+1,cc.rect(x,self.yMid,self.cw,self.ch),self,4)
 
     table.insert(self.nodes,node1)
     table.insert(self.nodes,node2)
@@ -58,19 +53,16 @@ end
 function Quadtree:getIndex(rect)
     local index = -1
 
-    local xMid = self.x + self.cw
-    local yMid = self.y + self.ch
+    local topFlag = rect.y > self.yMid
+    local bottomFlag = rect.y + rect.height < self.yMid
 
-    local topFlag = rect.y > yMid
-    local bottomFlag = rect.y + rect.height < yMid
-
-    if ( rect.x > xMid ) then
+    if ( rect.x > self.xMid ) then
         if topFlag then
             index = 1
         elseif bottomFlag then
             index = 2
         end
-    elseif ( rect.x + rect.width <xMid ) then
+    elseif ( rect.x + rect.width < self.xMid ) then
         if topFlag then
             index = 4
         elseif bottomFlag then
@@ -79,6 +71,14 @@ function Quadtree:getIndex(rect)
     end
 
     return index
+end
+
+function Quadtree:getPath(rtList)
+    local info = "{level:"..self.level.."|index:"..self.index.."}"
+    table.insert(rtList,info)
+    if self.parent then
+        self.parent:getPath(rtList)
+    end
 end
 
 function Quadtree:insertObj(object)
@@ -91,16 +91,20 @@ function Quadtree:insertObj(object)
             return
         end
     end
-    local on = table.nums(self.objects)+1
-    self.objects[on..""] = object
-    
-    if on > self.MAX_OBJECTS and self.level < self.MAX_LEVELS then
+    table.insert(self.objects,object)
+    object:setNode(self)
+
+    if #self.objects > self.MAX_OBJECTS and self.level < self.MAX_LEVELS then
         self:split()
-        for key,obj in pairs(self.objects) do
+        local j = 0
+        for i=1,#self.objects do
+            j = j + 1
+            local obj = self.objects[j]
             local index_ = self:getIndex(obj:getRect())
             if index_ ~= -1 then
                 self.nodes[index_]:insertObj(obj)
-                self.objects[key] = nil
+                table.remove(self.objects,j)
+                j = j - 1
             end
         end
     end
@@ -113,8 +117,8 @@ function Quadtree:retrive(object,rtList)
     if index ~= -1 and self.nodes[1] ~= nil then
         self.nodes[index]:retrive(object,rtList)
     end
-    for key,obj in pairs(self.objects) do
-        table.insert(rtList,obj)
+    for i=1,#self.objects do
+        table.insert(rtList,self.objects[i])
     end
 
     return rtList
@@ -136,23 +140,28 @@ function Quadtree:isInner(rect,bounds)
 end
 
 function Quadtree:refresh(root)
-    for key,obj in pairs(self.objects) do
+    local j = 0
+    for i=1,#self.objects do
+        j = j + 1
+        local obj = self.objects[j]
         local rect = obj:getRect()
-
         if self:isInner(rect,self.bounds) == false then
             if root then
                 root:insertObj(obj)
-                self.objects[key] = nil
+                table.remove(self.objects,j)
+                j = j - 1
             end
         else
             if self.nodes[1] then
                 local index = self:getIndex(rect)
                 if index ~= -1 then
                     self.nodes[index]:insertObj(obj)
-                    self.objects[key] = nil
+                    table.remove(self.objects,j)
+                    j = j - 1
                 end
             end
         end
+
     end
 
     for i=1,#self.nodes do

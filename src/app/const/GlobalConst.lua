@@ -1,0 +1,2 @@
+
+BOTTOM_HEIGHT = 100
