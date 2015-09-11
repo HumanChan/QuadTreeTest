@@ -39,7 +39,7 @@ function MainScene:update(dt)
 end
 
 function MainScene:normalUpdate(b1,dt)
-    local t = os.clock()
+    -- local t = os.clock()
     for j=1,#self.bulletList do
         local b2 = self.bulletList[j]
         if b1.key ~= b2.key then --碰撞检测
@@ -48,7 +48,7 @@ function MainScene:normalUpdate(b1,dt)
         end
         end
     end
-    print(os.clock()-t)
+    -- print(os.clock()-t)
 end
 
 function MainScene:refreshQuad()
