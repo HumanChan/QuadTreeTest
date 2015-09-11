@@ -124,8 +124,8 @@ function Quadtree:clear()
 end
 
 function Quadtree:isInner(rect)
-    return rect.x >= self.x and rect.x<= self.x+self.width and
-        rect.y >= self.y and rect.y<= self.y+self.height
+    return rect.x >= self.x and rect.x <= self.x+self.width and
+        rect.y >= self.y and rect.y <= self.y+self.height
 end
 
 function Quadtree:refresh(root)
