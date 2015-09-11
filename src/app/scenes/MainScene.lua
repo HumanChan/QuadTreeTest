@@ -20,7 +20,7 @@ function MainScene:ctor()
     self.updateFlag = true
 
     self.bulletList = {}
-    for i=1,10 do
+    for i=1,50 do
         local bullet = BulletObj.new(i)
         self:addChild(bullet)
         local callback = function(bullet)
@@ -52,24 +52,21 @@ function MainScene:update(dt)
 end
 
 function MainScene:normalUpdate(b1,dt)
-    -- local t = os.clock()
     for j=1,#self.bulletList do
         local b2 = self.bulletList[j]
         if b1.key ~= b2.key then --碰撞检测
             if cc.rectIntersectsRect(b1:getRect(),b2:getRect()) then
-                print("子弹"..b1.key.." 撞击了 子弹"..b2.key)
+                -- print("子弹"..b1.key.." 撞击了 子弹"..b2.key)
                 b1:setMoveData()
                 b2:setMoveData()
                 return
             end
         end
     end
-    -- print(os.clock()-t)
 end
 
 function MainScene:resetQuad()
-    self.quad = Quadtree.create(1,cc.rect(0,0,display.width,display.height))
-    self.quad:split()
+    self.quad = Quadtree.create(1,cc.rect(0,BOTTOM_HEIGHT,display.width,display.height))
     for i=1,#self.bulletList do
         local b = self.bulletList[i]
         self.quad:insertObj(b)
@@ -78,10 +75,14 @@ end
 
 function MainScene:refreshQuad()
     self.quad:refresh(self.quad)
+    -- self.quad:clear()
+    -- for i=1,#self.bulletList do
+    --     local b = self.bulletList[i]
+    --     self.quad:insertObj(b)
+    -- end
 end
 
 function MainScene:quadTreeUpdate(b1,dt)
-    local t = os.clock()
     self:refreshQuad()
     local checkList = {}
     self.quad:retrive(b1,checkList)
@@ -89,14 +90,13 @@ function MainScene:quadTreeUpdate(b1,dt)
         local b2 = checkList[i]
         if b1.key ~= b2.key then --碰撞检测
             if cc.rectIntersectsRect(b1:getRect(),b2:getRect()) then
-                print("子弹"..b1.key.." 撞击了 子弹"..b2.key)
+                -- print("子弹"..b1.key.." 撞击了 子弹"..b2.key)
                 b1:setMoveData()
                 b2:setMoveData()
                 return
             end
         end
     end
-    -- print(os.clock()-t)
 end
 
 function MainScene:createMenu()

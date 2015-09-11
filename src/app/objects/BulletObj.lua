@@ -24,6 +24,8 @@ function BulletObj:setMoveData()
 	local ry = math.random(BOTTOM_HEIGHT,display.height)
 	self.spx = math.random(150,500) * k[math.random(1,2)]
 	self.spy = math.random(150,500) * k[math.random(1,2)]
+	-- self.spx = math.random(1,2) * k[math.random(1,2)]
+	-- self.spy = math.random(1,2) * k[math.random(1,2)]
 	self:setRotation(-math.deg(cc.pToAngleSelf(cc.p(self.spx,self.spy))))
 	self:setPosition(rx,ry)
 end
