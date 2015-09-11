@@ -74,7 +74,6 @@ function MainScene:resetQuad()
         local b = self.bulletList[i]
         self.quad:insertObj(b)
     end
->>>>>>> 6013af22915442043cdd15c967484751e203cd7b
 end
 
 function MainScene:refreshQuad()
