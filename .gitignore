@@ -4,5 +4,6 @@
 /runtime
 .project
 .buildpath
+.DS_Store
 
 run.py
