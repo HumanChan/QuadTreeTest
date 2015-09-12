@@ -75,11 +75,6 @@ end
 
 function MainScene:refreshQuad()
     self.quad:refresh(self.quad)
-    -- self.quad:clear()
-    -- for i=1,#self.bulletList do
-    --     local b = self.bulletList[i]
-    --     self.quad:insertObj(b)
-    -- end
 end
 
 function MainScene:quadTreeUpdate(b1,dt)
