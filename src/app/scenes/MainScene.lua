@@ -20,7 +20,7 @@ function MainScene:ctor()
     self.updateFlag = true
 
     self.bulletList = {}
-    for i=1,50 do
+    for i=1,80 do
         local bullet = BulletObj.new(i)
         self:addChild(bullet)
         local callback = function(bullet)
